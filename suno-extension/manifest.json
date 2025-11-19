@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "Suno Bulk Downloader",
+    "version": "1.0.0",
+    "description": "Bulk download all your Suno AI songs with metadata",
+    "permissions": [
+      "storage",
+      "downloads",
+      "tabs"
+    ],
+    "host_permissions": [
+      "https://studio-api.prod.suno.com/*",
+      "https://cdn1.suno.ai/*",
+      "https://cdn2.suno.ai/*",
+      "https://suno.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_title": "Suno Bulk Downloader"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://suno.com/*"],
+        "js": ["content.js"],
+        "run_at": "document_idle"
+      }
+    ]
+  }
