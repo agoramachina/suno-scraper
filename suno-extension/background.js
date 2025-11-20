@@ -11,12 +11,14 @@ let downloadState = {
   },
 };
 
-// Listen for messages from popup
+// Listen for messages from popup and browse page
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startDownload') {
     handleStartDownload(message.config);
   } else if (message.action === 'cancelDownload') {
     downloadState.shouldCancel = true;
+  } else if (message.action === 'downloadSongs') {
+    handleDownloadSongs(message.songs, message.config);
   }
 });
 
@@ -107,6 +109,29 @@ async function handleStartDownload(config) {
     sendMessageToPopup({ type: 'error', error: error.message });
   } finally {
     resetDownloadState();
+  }
+}
+
+async function handleDownloadSongs(songs, config) {
+  // Download specific songs (called from browse page)
+  try {
+    console.log(`Downloading ${songs.length} selected songs`);
+
+    // Get current auth to ensure downloads work
+    // (auth is already in the song data from browse page, but we don't need it for direct downloads)
+    for (let i = 0; i < songs.length; i++) {
+      const song = songs[i];
+      await downloadSong(song, config);
+
+      // Small delay between downloads
+      if (i < songs.length - 1) {
+        await sleep(500);
+      }
+    }
+
+    console.log('Selected songs downloaded');
+  } catch (error) {
+    console.error('Error downloading selected songs:', error);
   }
 }
 

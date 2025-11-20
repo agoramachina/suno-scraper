@@ -27,7 +27,36 @@
     font-weight: 600;
     margin: 0;
   }
-  
+
+  .browse-section {
+    padding: 15px 20px 0;
+    background: white;
+  }
+
+  .btn-browse {
+    width: 100%;
+    padding: 12px 20px;
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-browse:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-browse:active {
+    transform: translateY(0);
+  }
+
   .settings {
     padding: 20px;
     background: white;

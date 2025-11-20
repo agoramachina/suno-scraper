@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Browse Suno Songs</title>
+  <style>
+    :root {
+      --bg-body: #f5f5f5;
+      --bg-card: #ffffff;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --border-color: #e0e0e0;
+      --border-light: #f0f0f0;
+      --primary-color: #667eea;
+      --primary-hover: #764ba2;
+      --secondary-bg: #f8f9fa;
+      --hover-bg: #f8f9fa;
+      --input-border: #dddddd;
+      --input-focus: #667eea;
+      --shadow-sm: rgba(0,0,0,0.05);
+      --shadow-md: rgba(0,0,0,0.15);
+      --error-color: #d32f2f;
+      --success-color: #4caf50;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-body: #121212;
+        --bg-card: #1e1e1e;
+        --text-primary: #e0e0e0;
+        --text-secondary: #b0b0b0;
+        --text-muted: #808080;
+        --border-color: #2a2a2a;
+        --border-light: #333333;
+        --primary-color: #6b52e8;
+        --primary-hover: #7d66f0;
+        --secondary-bg: #2a2a2a;
+        --hover-bg: #2a2a2a;
+        --input-border: #3a3a3a;
+        --input-focus: #8b7aff;
+        --shadow-sm: rgba(0,0,0,0.3);
+        --shadow-md: rgba(0,0,0,0.5);
+        --error-color: #ff6b6b;
+        --success-color: #66bb6a;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-body: #121212;
+      --bg-card: #1e1e1e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --text-muted: #808080;
+      --border-color: #2a2a2a;
+      --border-light: #333333;
+      --primary-color: #6b52e8;
+      --primary-hover: #7d66f0;
+      --secondary-bg: #2a2a2a;
+      --hover-bg: #2a2a2a;
+      --input-border: #3a3a3a;
+      --input-focus: #8b7aff;
+      --shadow-sm: rgba(0,0,0,0.3);
+      --shadow-md: rgba(0,0,0,0.5);
+      --error-color: #ff6b6b;
+      --success-color: #66bb6a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px var(--shadow-sm);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header h1 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+      border-radius: 50%;
+    }
+
+    .theme-toggle:hover {
+      color: var(--primary-color);
+      background: var(--secondary-bg);
+    }
+
+    .theme-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex-grow: 1;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 40px 10px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: 25px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .search-box .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 5px;
+      display: none;
+    }
+
+    .search-box.has-text .clear-btn {
+      display: block;
+    }
+
+    .stats {
+      font-size: 14px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .download-selected-btn {
+      padding: 10px 20px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .download-selected-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .download-selected-btn:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .songs-table {
+      background: var(--bg-card);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--secondary-bg);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th.sortable:hover {
+      background: var(--hover-bg);
+    }
+
+    .sort-indicator {
+      margin-left: 5px;
+      color: var(--primary-color);
+      font-size: 14px;
+      font-weight: normal;
+    }
+
+    .sort-indicator sub {
+      font-size: 10px;
+      margin-left: 1px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.1s;
+    }
+
+    tbody tr:hover {
+      background: var(--hover-bg);
+    }
+
+    td {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .song-name {
+      font-weight: 500;
+      color: var(--text-primary);
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .song-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .song-name a:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+
+    .date {
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .tags {
+      color: var(--text-secondary);
+      font-size: 12px;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .favorite-count {
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .favorite-count.has-favorites {
+      color: var(--success-color);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .checkbox-col {
+      width: 50px;
+      text-align: center;
+      padding: 15px 10px !important;
+      vertical-align: middle;
+    }
+
+    .checkbox-col input[type="checkbox"] {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: 0;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .btn-download {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-download:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-play {
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+    }
+
+    .btn-play:hover {
+      background: var(--hover-bg);
+      filter: brightness(0.95);
+    }
+
+    .btn-small:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: var(--error-color);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--border-light);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-top">
+      <div class="header-left">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" stroke-width="2"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke-width="2"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke-width="2"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke-width="2"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke-width="2"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke-width="2"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke-width="2"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke-width="2"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke-width="2"/>
+          </svg>
+          <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-width="2"/>
+          </svg>
+        </button>
+        <h1>🎵 Browse Suno Songs</h1>
+      </div>
+
+      <div class="header-right">
+        <div class="stats" id="stats">
+          Loading...
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-box" id="searchBox">
+        <input type="text" id="searchInput" placeholder="Search songs by name, project, or tags...">
+        <button class="clear-btn" id="clearSearch">✕</button>
+      </div>
+
+      <button class="download-selected-btn" id="downloadSelectedBtn" disabled>
+        Download Selected
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="songs-table">
+      <div id="tableContent">
+        <div class="loading">
+          <div class="spinner"></div>
+          <div>Loading your songs...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="browse.js"></script>
+</body>
+</html>

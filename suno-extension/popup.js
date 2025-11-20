@@ -1,4 +1,5 @@
 // DOM Elements
+const browseSongsBtn = document.getElementById('browseSongsBtn');
 const startBtn = document.getElementById('startBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const statusDiv = document.getElementById('status');
@@ -65,6 +66,11 @@ privateOnly.addEventListener('change', () => {
   if (privateOnly.checked) {
     publicOnly.checked = false;
   }
+});
+
+// Open browse songs page
+browseSongsBtn.addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('browse.html') });
 });
 
 // Start download
